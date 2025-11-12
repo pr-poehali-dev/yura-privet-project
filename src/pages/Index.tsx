@@ -1,12 +1,53 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import MainMenu from '@/components/game/MainMenu';
+import GameBoard from '@/components/game/GameBoard';
+import Tutorial from '@/components/game/Tutorial';
+import Settings from '@/components/game/Settings';
+
+type Screen = 'menu' | 'game' | 'tutorial' | 'settings';
 
 const Index = () => {
+  const [currentScreen, setCurrentScreen] = useState<Screen>('menu');
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'menu':
+        return (
+          <MainMenu
+            onPlay={() => setCurrentScreen('game')}
+            onTutorial={() => setCurrentScreen('tutorial')}
+            onSettings={() => setCurrentScreen('settings')}
+          />
+        );
+      case 'game':
+        return (
+          <GameBoard
+            difficulty={difficulty}
+            onExit={() => setCurrentScreen('menu')}
+          />
+        );
+      case 'tutorial':
+        return <Tutorial onBack={() => setCurrentScreen('menu')} />;
+      case 'settings':
+        return (
+          <Settings
+            difficulty={difficulty}
+            soundEnabled={soundEnabled}
+            onDifficultyChange={setDifficulty}
+            onSoundToggle={setSoundEnabled}
+            onBack={() => setCurrentScreen('menu')}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {renderScreen()}
     </div>
   );
 };
