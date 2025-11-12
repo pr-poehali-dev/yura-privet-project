@@ -28,14 +28,17 @@ const GameBoard = ({ difficulty, onExit }: GameBoardProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    initializeGame();
+    if (territories.length === 0) {
+      initializeGame();
+    }
   }, []);
 
   useEffect(() => {
-    if (turn === 'ai' && !isProcessing) {
-      setTimeout(() => aiTurn(), 1000);
+    if (turn === 'ai' && !isProcessing && territories.length > 0) {
+      const timer = setTimeout(() => aiTurn(), 1000);
+      return () => clearTimeout(timer);
     }
-  }, [turn, isProcessing]);
+  }, [turn, isProcessing, territories.length]);
 
   useEffect(() => {
     const income = setInterval(() => {
